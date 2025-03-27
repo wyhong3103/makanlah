@@ -1,0 +1,63 @@
+@font-face {
+  font-family: 'Universo Black';
+  font-style: normal;
+  font-display: swap;
+  src: url('./assets/fonts/Universo-Black.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'URW Geometric';
+  font-style: normal;
+  font-display: swap;
+  src: url('./assets/fonts/urw-geometric/URWGeometricRegular.otf') format('opentype');
+}
+
+:root {
+  --toastify-color-progress-light: #FB2C36
+}
+
+.Toastify__toast {
+  font-family: 'URW Geometric';
+  color: black;
+}
+
+.Toastify__toast--default {
+  width: 260px; 
+}
+
+.Toastify__progress-bar {
+  opacity: 1.0;
+}
+
+@media only screen and (max-width: 480px) {
+  .Toastify__toast-container {
+    width: 280px; 
+    left: 50%;
+    transform: translate(-50%);
+  }
+
+  .Toastify__toast--default {
+    border-radius: 6px;
+    position: relative;
+    top: 17px;
+  }
+
+  .Toastify__toast {
+    margin-bottom: 16px;
+  }
+}
+
+canvas {
+  z-index: -1;
+  max-width: min(100vw, 1000px) !important;
+}
+
+
+.infinite-scroll-component__outerdiv, .infinite-scroll-component {
+  width: 100%;
+}
+
+.locked {
+  -webkit-filter: grayscale(100%);
+  filter: grayscale(100%);
+}

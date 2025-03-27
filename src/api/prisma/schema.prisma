@@ -1,0 +1,198 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum FeedbackEnum {
+  yes
+  no
+  none
+  air_limau 
+  air_milo 
+  air_sirap 
+  ais_kacang 
+  apam_balik 
+  cendol 
+  char_kuey_teow 
+  chicken_rice 
+  congee 
+  curry_puff 
+  durian 
+  fried_rice 
+  kaya_toast 
+  kottu 
+  kuih_seri_muka 
+  mee_goreng 
+  nasi_biryani 
+  nasi_kerabu 
+  nasi_lemak 
+  ondeh_ondeh 
+  otak_otak 
+  papaya 
+  pineapple 
+  pisang_goreng 
+  rambutan 
+  rojak 
+  roti_canai 
+  satay 
+  teh_tarik 
+  thosai
+}
+
+enum PredictionEnum {
+  none
+  air_limau 
+  air_milo 
+  air_sirap 
+  ais_kacang 
+  apam_balik 
+  cendol 
+  char_kuey_teow 
+  chicken_rice 
+  congee 
+  curry_puff 
+  durian 
+  fried_rice 
+  kaya_toast 
+  kottu 
+  kuih_seri_muka 
+  mee_goreng 
+  nasi_biryani 
+  nasi_kerabu 
+  nasi_lemak 
+  ondeh_ondeh 
+  otak_otak 
+  papaya 
+  pineapple 
+  pisang_goreng 
+  rambutan 
+  rojak 
+  roti_canai 
+  satay 
+  teh_tarik 
+  thosai
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  name String
+  email String  @unique
+  password String?
+  image String?
+  totalUnlocked Int @default(0)
+  lastUnlocked DateTime @default(now())
+  isEmailVerified Boolean @default(false)
+  tokens Token[]
+  achievement Achievement?
+  food Food?
+  prediction Prediction[]
+  googleId String?
+  createdAt DateTime @default(now())
+}
+
+model Token {
+  token String @id
+  user User @relation(fields: [userId], references: [id])
+  userId Int
+  type String
+  expires DateTime
+  blacklisted Boolean @default(false)
+}
+
+model Achievement {
+  user User @relation(fields: [userId], references: [id])
+  userId Int @id
+  first_find DateTime?
+  halfway_there DateTime?
+  true_malaysian DateTime?
+  snek_kaki DateTime?
+  manisnya DateTime?
+  yamcha_loh DateTime?
+  raja_makan DateTime?
+  fruitful_journey DateTime?
+}
+
+model Food {
+  user User @relation(fields: [userId], references: [id])
+  userId Int @id
+  air_limau DateTime?
+  air_milo DateTime?
+  air_sirap DateTime?
+  ais_kacang DateTime?
+  apam_balik DateTime?
+  cendol DateTime?
+  char_kuey_teow DateTime?
+  chicken_rice DateTime?
+  congee DateTime?
+  curry_puff DateTime?
+  durian DateTime?
+  fried_rice DateTime?
+  kaya_toast DateTime?
+  kottu DateTime?
+  kuih_seri_muka DateTime?
+  mee_goreng DateTime?
+  nasi_biryani DateTime?
+  nasi_kerabu DateTime?
+  nasi_lemak DateTime?
+  ondeh_ondeh DateTime?
+  otak_otak DateTime?
+  papaya DateTime?
+  pineapple DateTime?
+  pisang_goreng DateTime?
+  rambutan DateTime?
+  rojak DateTime?
+  roti_canai DateTime?
+  satay DateTime?
+  teh_tarik DateTime?
+  thosai DateTime?
+}
+
+model Prediction {
+  predictionId Int @id @default(autoincrement())
+  user User @relation(fields: [userId], references: [id])
+  userId Int
+  image String 
+  air_limau Float
+  air_milo Float
+  air_sirap Float
+  ais_kacang Float
+  apam_balik Float
+  cendol Float
+  char_kuey_teow Float
+  chicken_rice Float
+  congee Float
+  curry_puff Float
+  durian Float
+  fried_rice Float
+  kaya_toast Float
+  kottu Float
+  kuih_seri_muka Float
+  mee_goreng Float
+  nasi_biryani Float
+  nasi_kerabu Float
+  nasi_lemak Float
+  ondeh_ondeh Float
+  otak_otak Float
+  papaya Float
+  pineapple Float
+  pisang_goreng Float
+  rambutan Float
+  rojak Float
+  roti_canai Float
+  satay Float
+  teh_tarik Float
+  thosai Float
+  predicted PredictionEnum
+  feedback FeedbackEnum?
+  createdAt DateTime @default(now())
+}

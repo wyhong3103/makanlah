@@ -1,0 +1,58 @@
+apiVersion: ray.io/v1
+kind: RayService
+metadata:
+  name: rayservice
+spec:
+  serveConfigV2: |
+    applications:
+      - name: food_model
+        import_path: ray_serve:makanlah_model
+        runtime_env:
+          working_dir: "s3://makanlah-s3-bucket/ray_modules-1.zip"
+          pip: ["torch==2.5.1", "torchvision==0.20.1", "mlflow", "tqdm", "pillow", "numpy", "python-multipart"]
+  rayClusterConfig:
+    rayVersion: '2.41.0' # should match the Ray version in the image of the containers
+    # Ray head pod template
+    headGroupSpec:
+      rayStartParams: 
+        num-cpus: "0"
+      #pod template
+      template:
+        spec:
+          containers:
+          - name: ray-head
+            image: rayproject/ray
+            resources:
+              limits:
+                cpu: 1
+                memory: 3G
+              requests:
+                cpu: 1
+                memory: 3G
+            ports:
+            - containerPort: 6379
+              name: gcs-server
+            - containerPort: 8265 # Ray dashboard
+              name: dashboard
+            - containerPort: 10001
+              name: client
+            - containerPort: 8000
+              name: serve
+    workerGroupSpecs:
+      - replicas: 1
+        minReplicas: 1
+        maxReplicas: 1
+        groupName: workergroup
+        rayStartParams: {}
+        template:
+          spec:
+            containers:
+              - name: ray-worker
+                image: rayproject/ray
+                resources:
+                  limits:
+                    cpu: 1
+                    memory: 3G
+                  requests:
+                    cpu: 1
+                    memory: 3G

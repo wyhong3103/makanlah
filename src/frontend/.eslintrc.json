@@ -1,0 +1,17 @@
+{
+    "extends": ["prettier"],
+    "rules": {
+        "no-console": "error",
+        "google-font-display": "warning",
+        "google-font-preconnect": "warning",
+        "inline-script-id": "error",
+        "object-shorthand": 0,
+        "prettier/prettier": [
+            "error",
+            {
+              "endOfLine": "auto"
+            }
+        ]
+    },
+    "ignorePatterns": ["node_modules/", "dist/", "public/", "**/.*"]
+}
