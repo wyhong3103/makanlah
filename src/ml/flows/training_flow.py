@@ -1,5 +1,6 @@
-from metaflow import FlowSpec, Parameter, step, kubernetes, pypi
+from metaflow import FlowSpec, Parameter, step, kubernetes, pypi, trigger_on_finish
 
+@trigger_on_finish(flow='MaterializeFlow')
 class TrainingFlow(FlowSpec):
     @kubernetes(cpu=1,memory=500)
     @step

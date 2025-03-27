@@ -1,6 +1,7 @@
 from metaflow import FlowSpec, Parameter, step, kubernetes, conda, pypi, environment, resources, schedule
 import os
 
+@schedule(cron='0 16 * * *', timezone='Etc/UTC')
 class MaterializeFlow(FlowSpec):
     @kubernetes(cpu=1,memory=500)
     @step
