@@ -124,3 +124,7 @@ The results of our model are presented below:
 </div>
 
 The source code for evaluation is located in `src/ml/notebooks/evaluate.ipynb`.
+
+## Got questions or suggestions?
+
+Feel free to reach out to me on [LinkedIn](https://www.linkedin.com/in/wong-yen-hong/) or via [email](mailto:wyhong3103@gmail.com).
