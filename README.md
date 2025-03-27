@@ -30,11 +30,15 @@ Built with [React.js](https://react.dev/) and [ChakraUI](https://chakra-ui.com/)
 
 It was hosted on [Vercel](https://vercel.com/) because it's simple and awesome.
 
+The source code for the web application can be found in the `src/frontend` directory.
+
 ### 2. MakanLah API
 
 The MakanLah API powers the backend, handling all user requests from the web app. Built with [Express.js](https://expressjs.com/) (using a clean, well-structured [template](https://github.com/hagopj13/node-express-boilerplate)), it stores user data in a PostgreSQL database on [Amazon RDS](https://aws.amazon.com/rds/). For food images, we store them in [Amazon S3](https://aws.amazon.com/s3/) buckets.
 
 The API is containerized and hosted on [Amazon ECR](https://aws.amazon.com/ecr/) (Elastic Container Registry), then deployed to a [Kubernetes](https://kubernetes.io/) (K8s) cluster on [Amazon EKS](https://aws.amazon.com/eks/) (Elastic Kubernetes Service). To expose it, we used K8s Ingress, which routes traffic to the right pods.
+
+The source code for the API component can be found in the `src/api` directory.
 
 ### 3. Model Registry
 
@@ -42,17 +46,23 @@ We needed a way to track experiments and manage different versions of our food c
 
 We deployed it using a [community Helm chart](https://artifacthub.io/packages/helm/community-charts/mlflow), with an S3 bucket for artifacts and a PostgreSQL database for metadata.
 
+The source code for provisioning MLflow is located in the `src/infra/mlflow.tf`.
+
 ### 4. Model Serving
 
 For scalable, high-performance model serving, we chose [Ray Serve](https://docs.ray.io/en/latest/serve/index.html), a framework built on [Ray Core](https://docs.ray.io/en/latest/ray-core/walkthrough.html). It can handle request batching and auto-scaling effortlessly, making it ideal for production workloads.
 
 Our serving app pulls the latest model from MLflow’s registry before spinning up. It runs on a Ray cluster, deployed via [KubeRay](https://github.com/ray-project/kuberay) (_a toolkit to run Ray applications on K8s_).
 
+The source code for provisioning the Ray cluster is in `src/infra/config/ray_service.yaml`, while the serving code is located in `src/ml/modules/ray_serve.py`.
+
 ### 5. Model Training
 
 To train our food classification model efficiently in a distributed manner, we used [Ray Train](https://docs.ray.io/en/latest/train/train.html) (another library built on top of [Ray Core](https://docs.ray.io/en/latest/ray-core/walkthrough.html)). It handles data-parallel training on PyTorch without us worrying about how to parallelize the workloads.
 
 Like the serving component, training jobs run on a Ray cluster orchestrated by [KubeRay](https://github.com/ray-project/kuberay).
+
+The source code for training job is located in `src/ml/modules/ray_train.py`.
 
 ### 6. Workflow Orchestration
 
@@ -65,9 +75,13 @@ In MakanLah, we built two key flows:
 
 We deployed these workflows on Argo Workflows, which is recommended by Metaflow as a production workflow orchestrator for K8s.
 
+The source code for the machine learning workflows can be found in the `src/ml/flows` directory.
+
 ### Misc
 
 To ensure the infrastructure is easily reproducible and disposable, we used [Terraform](https://www.terraform.io/) as our Infrastructure as Code (IaC) tool to manage it.
+
+The source code for the infrastructure is in the `src/infra` directory.
 
 ## Food Classification
 
@@ -92,6 +106,8 @@ Since we're broke, we can only run inference on a CPU. So we opted for [MobileNe
 
 To handle out-of-distribution examples, we applied [Outlier Exposure](https://arxiv.org/abs/1812.04606). The idea is simple, if an image is from an outlier class, we force the model to predict a uniform distribution via Softmax, ensuring it doesn't misclassify these examples.
 
+The first version of the model was trained locally in `src/ml/notebooks/train.ipynb`.
+
 ### Evaluation
 
 We evaluated our model using two metrics, each with a different focus. First, we used the average F1 score to assess how well the model classifies in-distribution examples. Second, we used the F-beta score (a generalized F1), which places more weight on recall. This metric helps test the model's ability to identify whether an image belongs to one of the 30 classes.
@@ -106,3 +122,5 @@ The results of our model are presented below:
 | F-beta (beta = 1.5) | Out-of-distribution | 0.92  |
 
 </div>
+
+The source code for evaluation is located in `src/ml/notebooks/evaluate.ipynb`.
