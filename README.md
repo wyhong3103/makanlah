@@ -100,9 +100,9 @@ The results of our model are presented below:
 
 <div align='center'>
 
-| Metric                    | Type                | Score |
-| ------------------------- | ------------------- | ----- |
-| F1                        | In-distribution     | 0.90  |
-| F-$\beta$ ($\beta$ = 1.5) | Out-of-distribution | 0.92  |
+| Metric              | Type                | Score |
+| ------------------- | ------------------- | ----- |
+| F1                  | In-distribution     | 0.90  |
+| F-beta (beta = 1.5) | Out-of-distribution | 0.92  |
 
 </div>
