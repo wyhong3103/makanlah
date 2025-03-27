@@ -4,17 +4,19 @@
     <img src='./assets/makanlah.png'/>
 </div>
 
-**MakanLah** is a local food education app made for Malaysians! Think of it like Pokémon Go, but for food. Your goal is to "capture" as many local foods as you can while competing with others. For every food you "catch," MakanLah shares cool facts, including nutritional info and fun trivia!
+[**MakanLah**](https://makan-lah.my) is a local food education app made for Malaysians! Think of it like Pokémon Go, but for food. Your goal is to "capture" as many local foods as you can while competing with others. MakanLah features a total of 30 foods, and for every food you "catch," it shares cool facts, including nutritional info and fun trivia!
 
 The app runs on a machine learning model trained on a small dataset I collected myself. It's not perfect—sometimes it misidentifies foods, and yes, you could cheat by snapping pics from Google. But that’s where YOU come in! MakanLah has a model retraining pipeline that uses user feedback to improve over time. The more data we get, the smarter it becomes—meaning fewer mistakes down the road.
 
+Try MakanLah now at: https://makan-lah.my
+
 ## Motivation
 
-The main objective is to apply what I've been learning about MLOps (and ML in general). A secondary goal is to build an app that _can_ support users and have _somewhat_ of a real-world use case. I know that a lot of the things I've done in this project are probably overkill (and probably dumb), but it's all part of the proof-of-concept, and the main goal is to learn anyway, so why not? (My wallet is bleeding with every second this app is running on AWS.)
+The main goal is to apply what I've been learning about MLOps (and ML in general). A secondary goal is to build an app that _can_ support users and have _somewhat_ of a real-world use case. I know that a lot of the things I've done in this project are probably overkill (and probably dumb), but it's all part of the proof-of-concept, and the main goal is to learn anyway, so why not? (My wallet is bleeding with every second this app is running on AWS.)
 
 ## Architecture
 
-The MakanLah system consists of several key components: the **MakanLah App, MakanLah API, Model Registry, Model Serving, Model Training, and Workflow Orchestration**.
+The MakanLah system is composed of several key components: the **MakanLah App, MakanLah API, Model Registry, Model Serving, Model Training, and Workflow Orchestration**. These components work together to power the system, as illustrated in the diagram below.
 
 <div align='center'>
     <img src='./assets/architecture.png'/>
@@ -48,7 +50,7 @@ Our serving app pulls the latest model from MLflow’s registry before spinning 
 
 ### 5. Model Training
 
-To train our food classification model efficiently in a distributed manner, we used [Ray Train](https://docs.ray.io/en/latest/train/train.html) (another library built on top of Ray Core). It handles data-parallel training on PyTorch without us worrying about how to parallelize the workloads.
+To train our food classification model efficiently in a distributed manner, we used [Ray Train](https://docs.ray.io/en/latest/train/train.html) (another library built on top of [Ray Core](https://docs.ray.io/en/latest/ray-core/walkthrough.html)). It handles data-parallel training on PyTorch without us worrying about how to parallelize the workloads.
 
 Like the serving component, training jobs run on a Ray cluster orchestrated by [KubeRay](https://github.com/ray-project/kuberay).
 
@@ -63,6 +65,10 @@ In MakanLah, we built two key flows:
 
 We deployed these workflows on Argo Workflows, which is recommended by Metaflow as a production workflow orchestrator for K8s.
 
+### Misc
+
+To ensure the infrastructure is easily reproducible and disposable, we used [Terraform](https://www.terraform.io/) as our Infrastructure as Code (IaC) tool to manage it.
+
 ## Food Classification
 
 ### Dataset
@@ -73,12 +79,30 @@ To make sure the model doesn't mistake things like a red-haired person for rambu
 
 Finally, we performed a random 80/20 split for training and testing the dataset.
 
+Some example images from the dataset is shown below:
+
+<div align='center'>
+    <img src='./assets/examples.png'/>
+    <p>The first image (from the left) is an in-distribution example, while the rest are out-of-distribution examples.</p>
+</div>
+
 ### Model
 
-Since we're broke, we need to run inference on a CPU. So we opted for [MobileNet](https://arxiv.org/abs/1704.04861), a lightweight model known for real-time predictions. We initialized it with ImageNet's pre-trained weights to speed up training.
+Since we're broke, we can only run inference on a CPU. So we opted for [MobileNet](https://arxiv.org/abs/1704.04861), a lightweight model known for real-time predictions. We initialized it with ImageNet's pre-trained weights to speed up training.
 
-To handle out-of-distribution examples, we applied [Outlier Exposure](https://github.com/hendrycks/outlier-exposure). The idea is simple, if an image is from an outlier class, we force the model to predict a uniform distribution via Softmax, ensuring it doesn't misclassify these examples.
+To handle out-of-distribution examples, we applied [Outlier Exposure](https://arxiv.org/abs/1812.04606). The idea is simple, if an image is from an outlier class, we force the model to predict a uniform distribution via Softmax, ensuring it doesn't misclassify these examples.
 
 ### Evaluation
 
-We evaluated our model using two metrics, each with a different focus. First, we used the average F1 score to assess how well the model classifies in-distribution examples. Second, we used the F-beta score (A generalized F1), which places more weight on recall. This metric helps test the model's ability to identify whether an image belongs to one of the 30 classes, catching more potential positives.
+We evaluated our model using two metrics, each with a different focus. First, we used the average F1 score to assess how well the model classifies in-distribution examples. Second, we used the F-beta score (a generalized F1), which places more weight on recall. This metric helps test the model's ability to identify whether an image belongs to one of the 30 classes.
+
+The results of our model are presented below:
+
+<div align='center'>
+
+| Metric                    | Type                | Score |
+| ------------------------- | ------------------- | ----- |
+| F1                        | In-distribution     | 0.90  |
+| F-$\beta$ ($\beta$ = 1.5) | Out-of-distribution | 0.92  |
+
+</div>
