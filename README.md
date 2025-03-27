@@ -8,7 +8,9 @@
 
 The app runs on a machine learning model trained on a small dataset I collected myself. It's not perfect—sometimes it misidentifies foods, and yes, you could cheat by snapping pics from Google. But that’s where YOU come in! MakanLah has a model retraining pipeline that uses user feedback to improve over time. The more data we get, the smarter it becomes—meaning fewer mistakes down the road.
 
-Try MakanLah now at: https://makan-lah.my
+~Try MakanLah now at: https://makan-lah.my~
+
+Update: I took down the site 😔
 
 ## Motivation
 
