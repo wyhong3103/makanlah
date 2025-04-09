@@ -12,7 +12,7 @@ The app runs on a machine learning model trained on a small dataset I collected 
 
 ~Update: I took down the site 😔~
 
-Try MakanLah now at (before I take it down again): https://makan-lah.my
+Try MakanLah now (before I take it down again): https://makan-lah.my
 
 ## Motivation
 
